@@ -1,0 +1,125 @@
+{% include "gallery/base.html" %}
+
+{% block content %}
+	{% load extra_tags %}
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <script>
+          alert('{{ message }}');
+        </script>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <section class="jumbotron text-center">
+    <div class="container">
+      <h1 class="jumbotron-heading">Jonh & Jana wedding album</h1>
+      <p class="lead text-muted">You can upload your photo from our weeding last sunday here !</p>
+      <p>
+          <a href="{% url 'upload_image' %}" class="btn btn-primary my-2">Upload</a>
+      </p>
+  </section>
+
+	<div class="album py-5 bg-light">
+		<div class="container">
+
+			<div class="row pl-2">
+					<spam>
+						Filter by:
+					</spam>
+					<a href="{{ base_host }}?like=1" style="text-decoration: none;">Likes</a> | 
+					<a href="{{ base_host }}?date=1" style="text-decoration: none;">Date</a> | 
+					<a href="{{ base_host }}" style="text-decoration: none;">Clean</a>
+
+			</div>
+
+		{% for photo in photos %}
+
+			<div class="row">
+			<div class="col-md-4">
+				<div class="card mb-4 box-shadow">
+				<img class="card-img-top" src="{{ photo.reference_url }}" alt="{{ photo.alt_description }}"">
+				<div class="card-body">
+					<p class="card-text">{{ photo.author }}</p>
+					<div class="d-flex justify-content-between align-items-center">
+					<div class="btn-group">
+						<button type="button" class="btn btn-sm btn-outline-secondary" onclick="like('{{ photo.id }}');">{{ photo.like_count }}<i class="fas fa-heart ml-1" {% is_liked request photo.id as is_likedd %}{% if is_likedd %}style="color:red;"{% else %}style="color:grey;"{% endif %}name="like-{{ photo.id }}"></i> Like</button>
+					</div>
+					<small class="text-muted">
+						{{ photo.created_at }}
+					</small>
+					</div>
+				</div>
+				</div>
+			</div>
+			
+			{% empty %}
+
+			<div class="row" class="gallery">
+				<div class="col-md-4">
+				<div class="card mb-4 box-shadow">
+					<img class="card-img-top" id="upimg" src="data:image/png;base64,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" alt="Any photos yet.">
+					<div class="card-body">
+					<p class="card-text" id='photoGreetingsTxt'>Upload the first photo !</p>
+					</div>
+				</div>
+				</div>
+			</div>
+			
+			{% endfor %}
+			</div>
+		</div>
+		<div class="d-flex justify-content-between">
+			<div>
+
+			</div>
+			<div class="pagination pagination-sm">
+				<span class="step-links d-flex">
+					{% if photos.has_previous %}
+						<a class="page-link" href="?page=1">&laquo; first</a>
+						<a class="page-link" href="?page={{ photos.previous_page_number }}">previous</a>
+					{% endif %}
+			
+					<span class="text-secondary m-1">
+						{{ photos.number }} of {{ photos.paginator.num_pages }}.
+					</span>
+			
+					{% if photos.has_next %}
+						<a class="page-link" href="?page={{ photos.next_page_number }}">next</a>
+						<a class="page-link" href="?page={{ photos.paginator.num_pages }}">last &raquo;</a>
+					{% endif %}
+				</span>
+			</div>
+			
+			<div>	
+			</div>
+			
+		</div>
+		
+	</div>
+<script>
+    function like(img_id){
+		like_btn = $("[name=like-"+img_id+"]");
+    	$.ajax({
+			url:"https://"+document.location.hostname+":8000/api/like_photo",
+			type:'GET',
+			data:{
+				"image_id":img_id
+			},
+			dataType: 'json',
+			success: function(){
+				like_btn.attr('style', 'color:red;');
+			}
+		});
+
+		if (like_btn.css('color') == "rgb(255, 0, 0)"){
+			like_btn.attr('style', 'color:grey;');
+		}else{
+			like_btn.attr('style', 'color:red;');
+		}
+			
+    };
+
+  </script>
+  {% endblock %}

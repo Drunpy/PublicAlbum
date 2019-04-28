@@ -1,0 +1,7 @@
+djongo
+django
+dnspython
+boto3
+djangorestframework
+django-heroku
+gunicorn

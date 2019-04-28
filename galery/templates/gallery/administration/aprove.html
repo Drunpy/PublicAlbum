@@ -1,0 +1,61 @@
+{% include "gallery/base.html" %}
+
+{% block content %}
+<div class="album py-5 bg-light">
+		<div class="container">
+            <h2 class="mb-2"> Waiting aprovement</h2>
+            <hr>
+        {% for photo in photos %}
+
+			<div class="row" name="div-{{ photo.id }}">
+                <div class="col-md-4">
+                    <div class="card mb-4 box-shadow">
+                    <img class="card-img-top" src="{{ photo.reference_url }}" alt="{{ photo.alt_description }}"">
+                    <div class="card-body">
+                        <p class="card-text">{{ photo.author }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="aprove('{{ photo.id }}');"><i class="fas fa-check-circle" name="aprove-{{ photo.id }}"></i> Aprove</button>
+                        </div>
+                        <small class="text-muted">
+                            {{ photo.created_at }}
+                        </small>
+                        </div>
+                    </div>
+                </div>
+			</div>
+			
+		{% empty %}
+
+            <div class="row" class="gallery">
+                <div class="col-md-4">
+                <div class="card mb-4 box-shadow">
+                    <img class="card-img-top" id="upimg" src="http://www.badideatshirts.com/Assets/ProductImages/PS_1312_NOTHING_HERE.jpg" alt="Any photos yet.">
+                    <div class="card-body">
+                    <p class="card-text" id='photoGreetingsTxt'>No photos to aprove.</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+			
+		{% endfor %}
+			</div>
+		</div>
+		
+    </div>
+    <script>
+        function aprove(img_id){
+
+            $("i[name=aprove-"+img_id+"]").attr('style', 'color: green;');
+            
+            $.ajax({
+                url:"https://"+document.location.hostname+":8000/api/aprove_photo",
+                type:'GET',
+                dataType:'json',
+                data:{
+                    "image":img_id
+                },
+            });
+        }
+    </script>
+{% endblock %}

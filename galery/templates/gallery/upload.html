@@ -1,0 +1,111 @@
+{% include "gallery/base.html" %}
+
+{% block content %}
+<style>
+    header h1{
+        font-size:12pt;
+        color: #fff;
+        background-color: #1BA1E2;
+        padding: 20px;
+
+    }
+    article
+    {
+        width: 80%;
+        margin:auto;
+        margin-top:10px;
+    }
+
+
+    .thumbnail{
+
+        height: 100px;
+        margin: 10px;    
+    }
+</style>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <script>
+                alert('{{ message }}');
+            </script>
+        {% endfor %}
+    </ul>
+{% endif %}
+<article>
+    <form method="POST" enctype='multipart/form-data' class="m-2">
+        {% csrf_token %}
+        <div class="form-group row col-sm-3">
+            <label for="friendNname">Your name: </label>
+            <input id="friendName" type="text" placeholder="Ex: Carlos" name="friend_name"/>
+            <small>Let the grooms know who took the pictures.</small>
+        </div>
+        <div class="form-group">
+            <label for="files">Select your photos: </label>
+            <input id="files" name="images[]" type="file" multiple/>
+        </div>
+        <button id="submit" type="submit" class="btn btn-primary" onclick="activateLoading();">Send</button>
+
+        <div class="row mt-2">
+            
+            <output id="result" />
+        </div>
+    </form>
+
+</article>
+    <script>
+
+        window.onload = function(){
+        
+        //Check File API support
+        if(window.File && window.FileList && window.FileReader)
+        {
+            var filesInput = document.getElementById("files");
+            
+            filesInput.addEventListener("change", function(event){
+                
+                var files = event.target.files; //FileList object
+                var output = document.getElementById("result");
+                
+                for(var i = 0; i< files.length; i++)
+                {
+                    var file = files[i];
+                    
+                    //Only pics
+                    if(!file.type.match('image'))
+                      continue;
+                    
+                    var picReader = new FileReader();
+                    
+                    picReader.addEventListener("load",function(event){
+                        
+                        var picFile = event.target;
+                        
+                        var div = document.createElement("div");
+                        
+                        div.innerHTML = "<img class='img-fluid card-img-top shadow p-1 mb-5 bg-white rounded' src='" + picFile.result + "'" +
+                                "title='" + picFile.name + "'/>";
+                        
+                        output.insertBefore(div,null);            
+                    
+                    });
+                    
+                     //Read the image
+                    picReader.readAsDataURL(file);
+                }                               
+               
+            });
+        }
+        else
+            {
+                console.log("Your browser does not support File API");
+            }
+        }
+
+        function activateLoading(){
+            $("#submit").text('Loading...');
+        };
+    
+    </script>
+
+{% endblock %}
