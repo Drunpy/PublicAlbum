@@ -68,3 +68,4 @@
     - Project site: https://album42.herokuapp.com/
     - Models for the app can be found at galery/models.py
     - Brand new repo because AWS3 and DB keys.
+    
